@@ -79,7 +79,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[100] bg-royal-navy/50 backdrop-blur-md flex flex-col pt-20 px-4 sm:px-6 lg:px-8"
+          className="fixed inset-0 z-[100] bg-royal-navy/50 backdrop-blur-3xl flex flex-col pt-32 px-4 sm:px-6 lg:px-8"
         >
           <div className="absolute top-6 right-6 lg:top-10 lg:right-10">
             <button

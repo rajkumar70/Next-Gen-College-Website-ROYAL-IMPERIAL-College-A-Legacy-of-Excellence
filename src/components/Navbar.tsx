@@ -40,11 +40,12 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav
-      className={cn(
-        'fixed top-0 left-0 w-full z-50 transition-all duration-500 glass-nav py-3'
-      )}
-    >
+    <>
+      <nav
+        className={cn(
+          'fixed top-0 left-0 w-full z-50 transition-all duration-500 glass-nav py-3'
+        )}
+      >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3 group">
@@ -167,8 +168,9 @@ export default function Navbar() {
           PORTAL LOGIN
         </Link>
       </div>
-
-      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </nav>
+
+    <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   );
 }
