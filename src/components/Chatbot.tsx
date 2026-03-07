@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { GoogleGenAI } from '@google/genai';
 
 interface Message {
   id: string;
@@ -33,7 +34,7 @@ export default function Chatbot() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -43,32 +44,68 @@ export default function Chatbot() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const currentMessages = [...messages, userMessage];
+    setMessages(currentMessages);
     setInput('');
     setIsTyping(true);
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponses = [
-        "I can help you with your portal login. Are you having trouble with your credentials?",
-        "You can find your examination results in the 'Academics' tab after logging in.",
-        "The library is open from 8:00 AM to 10:00 PM on weekdays.",
-        "For fee payment issues, please contact the accounts department at accounts@royalimperial.edu.in.",
-        "I'm still learning, but I'll do my best to assist you with your queries!",
-      ];
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
-      const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-      
+      const contents = currentMessages.map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }));
+
+      const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-preview",
+        contents: contents,
+        config: {
+          systemInstruction: `You are the Royal Imperial Student Assistant, a highly knowledgeable and helpful AI chatbot for students and teachers on the Student Portal. 
+          
+Your purpose is to answer any questions about the university, academics, registration, library, financial accounts, and campus life without fail.
+          
+Here is the comprehensive information you know about the Student Portal:
+1. Dashboard: Shows GPA trends, today's schedule, and upcoming deadlines.
+2. My Courses: Lists enrolled courses, course materials, assignments, and grades.
+3. Grades & Transcripts: Displays semester-wise grades, cumulative GPA, and options to download official or unofficial transcripts.
+4. Registration Services: 
+   - Course Registration: Search and add courses to the wishlist, view available seats.
+   - Semester Registration: Register for the upcoming semester, select courses, and pay tuition fees (Base fee: $500, plus course fees).
+   - Exam Registration: Register for exams, select exam center (Main, North, South Campus), and pay exam fees ($50 per exam + $15 processing fee).
+   - Bonafide Certificate: Request a bonafide certificate for official purposes.
+5. Financial Account: View current balance, next payment due, and recent transactions.
+6. Library Services: Search the library database, view available books, and check out digital resources.
+7. Career Center: Access job boards, resume building tools, and career advising.
+8. Certificates: View and download earned certificates and awards.
+9. Campus Map: An interactive 3D map of the campus showing key buildings like the Main Arts Building, Tech Block, Innovation Lab, and the Library.
+10. Advising: Schedule appointments with academic advisors.
+11. Dining Plan: Manage meal plans and view dining hall menus.
+
+Always be polite, concise, and helpful. If a user asks a general question, provide a clear and accurate answer based on this information. If they ask about something outside this scope, try to guide them to the relevant department or feature.`,
+        }
+      });
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: randomResponse,
+        text: response.text || "I'm sorry, I couldn't process that request.",
         sender: 'bot',
         timestamp: new Date(),
       };
       
       setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error("Error generating response:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm sorry, I'm having trouble connecting right now. Please try again later.",
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

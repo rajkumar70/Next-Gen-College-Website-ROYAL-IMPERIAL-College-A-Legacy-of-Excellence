@@ -6,23 +6,26 @@ import { researchItems } from '../data/researchData';
 
 export default function Research() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilter, setActiveFilter] = useState<'All' | 'Paper' | 'Book'>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
   const filteredPapers = useMemo(() => {
-    return researchItems.filter(paper => 
-      paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.authors.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      paper.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  }, [searchTerm]);
+    return researchItems.filter(paper => {
+      const matchesSearch = paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            paper.authors.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            paper.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesFilter = activeFilter === 'All' || paper.type === activeFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [searchTerm, activeFilter]);
 
   const totalPages = Math.ceil(filteredPapers.length / itemsPerPage);
   const currentItems = filteredPapers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, activeFilter]);
 
   return (
     <motion.div
@@ -52,11 +55,21 @@ export default function Research() {
               className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-royal-gold focus:ring-1 focus:ring-royal-gold outline-none transition-all"
             />
           </div>
-          <div className="flex gap-3 w-full md:w-auto">
-            <button className="flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 rounded-lg text-royal-navy font-medium hover:bg-gray-50 transition-colors flex-1 md:flex-none">
-              <Filter size={18} />
-              Filter
-            </button>
+          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 custom-scrollbar">
+            <Filter className="text-gray-400 shrink-0 self-center mr-2" size={20} />
+            {['All', 'Paper', 'Book'].map(filter => (
+              <button
+                key={filter}
+                onClick={() => setActiveFilter(filter as any)}
+                className={`px-6 py-3 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                  activeFilter === filter 
+                    ? 'bg-royal-navy text-white' 
+                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                {filter === 'All' ? 'All Publications' : filter === 'Paper' ? 'Research Papers' : 'Books'}
+              </button>
+            ))}
           </div>
         </div>
 

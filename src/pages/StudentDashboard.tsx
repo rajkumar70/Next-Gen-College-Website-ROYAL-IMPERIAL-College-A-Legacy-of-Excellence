@@ -42,9 +42,17 @@ const navItems = [
   { icon: Award, label: 'Certificates', id: 'certificates' },
 ];
 
+import CampusMapContent from '../components/CampusMapContent';
+import LibraryDBContent from '../components/LibraryDBContent';
+import AdvisingContent from '../components/AdvisingContent';
+import DiningPlanContent from '../components/DiningPlanContent';
+import SemesterRegistrationForm from '../components/SemesterRegistrationForm';
+import ExamRegistrationForm from '../components/ExamRegistrationForm';
+import StudentSearchOverlay from '../components/StudentSearchOverlay';
+
 // --- Tab Components ---
 
-function DashboardContent() {
+function DashboardContent({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
   const [todos, setTodos] = useState([
     { id: 1, text: 'Read Chapter 4 for OS', completed: false },
     { id: 2, text: 'Submit Math Assignment', completed: true },
@@ -315,12 +323,16 @@ function DashboardContent() {
             </div>
             <div className="p-4 grid grid-cols-2 gap-3">
               {[
-                { icon: BookOpen, label: 'Library DB' },
-                { icon: Users, label: 'Advising' },
-                { icon: MapPin, label: 'Campus Map' },
-                { icon: CreditCard, label: 'Dining Plan' },
+                { icon: BookOpen, label: 'Library DB', id: 'library-db' },
+                { icon: Users, label: 'Advising', id: 'advising' },
+                { icon: MapPin, label: 'Campus Map', id: 'campus-map' },
+                { icon: CreditCard, label: 'Dining Plan', id: 'dining-plan' },
               ].map((resource, idx) => (
-                <button key={idx} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-royal-gold/30 transition-all group">
+                <button 
+                  key={idx} 
+                  onClick={() => setActiveTab(resource.id)}
+                  className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-royal-gold/30 transition-all group"
+                >
                   <resource.icon size={24} className="text-white/70 group-hover:text-royal-gold transition-colors" />
                   <span className="text-xs font-medium text-white/90">{resource.label}</span>
                 </button>
@@ -594,16 +606,28 @@ function RegistrationContent() {
         </div>
       </div>
 
-      <div className="flex gap-4 border-b border-slate-200 mb-6">
+      <div className="flex gap-4 border-b border-slate-200 mb-6 overflow-x-auto custom-scrollbar">
         <button 
           onClick={() => setActiveRegTab('courses')}
-          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 ${activeRegTab === 'courses' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
+          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeRegTab === 'courses' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
         >
           Course Registration
         </button>
         <button 
+          onClick={() => setActiveRegTab('semester')}
+          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeRegTab === 'semester' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
+        >
+          Semester Registration
+        </button>
+        <button 
+          onClick={() => setActiveRegTab('exam')}
+          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeRegTab === 'exam' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
+        >
+          Exam Registration
+        </button>
+        <button 
           onClick={() => setActiveRegTab('bonafide')}
-          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 ${activeRegTab === 'bonafide' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
+          className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeRegTab === 'bonafide' ? 'border-royal-navy text-royal-navy' : 'border-transparent text-slate-500 hover:text-royal-navy'}`}
         >
           Bonafide Certificate
         </button>
@@ -709,6 +733,10 @@ function RegistrationContent() {
           </div>
         </div>
       </div>
+      ) : activeRegTab === 'semester' ? (
+        <SemesterRegistrationForm />
+      ) : activeRegTab === 'exam' ? (
+        <ExamRegistrationForm />
       ) : (
         <BonafideForm />
       )}
@@ -765,7 +793,7 @@ function FinancialContent() {
   );
 }
 
-function LibraryContent() {
+function LibraryContent({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <h1 className="text-3xl font-serif font-bold text-royal-navy mb-6">Library Services</h1>
@@ -780,7 +808,10 @@ function LibraryContent() {
               placeholder="Search by title, author, or keyword..." 
               className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-royal-gold"
             />
-            <button className="px-8 py-3 bg-royal-gold text-royal-navy font-bold rounded-xl hover:bg-royal-gold-light transition-colors shadow-lg">
+            <button 
+              onClick={() => setActiveTab('library-db')}
+              className="px-8 py-3 bg-royal-gold text-royal-navy font-bold rounded-xl hover:bg-royal-gold-light transition-colors shadow-lg"
+            >
               Search
             </button>
           </div>
@@ -1431,6 +1462,7 @@ export default function StudentDashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [notifications, setNotifications] = useState([
     { id: 1, text: 'Your transcript request has been processed.', time: '2 hours ago', unread: true },
     { id: 2, text: 'New assignment posted in Machine Learning.', time: '5 hours ago', unread: true },
@@ -1449,16 +1481,20 @@ export default function StudentDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <DashboardContent />;
+      case 'dashboard': return <DashboardContent setActiveTab={setActiveTab} />;
       case 'courses': return <CoursesContent />;
       case 'grades': return <GradesContent />;
       case 'registration': return <RegistrationContent />;
       case 'financial': return <FinancialContent />;
-      case 'library': return <LibraryContent />;
+      case 'library': return <LibraryContent setActiveTab={setActiveTab} />;
       case 'career': return <CareerContent />;
       case 'certificates': return <CertificatesContent />;
       case 'settings': return <SettingsContent />;
-      default: return <DashboardContent />;
+      case 'library-db': return <LibraryDBContent />;
+      case 'advising': return <AdvisingContent />;
+      case 'campus-map': return <CampusMapContent />;
+      case 'dining-plan': return <DiningPlanContent />;
+      default: return <DashboardContent setActiveTab={setActiveTab} />;
     }
   };
 
@@ -1539,9 +1575,14 @@ export default function StudentDashboard() {
           </div>
           <span className="font-serif font-bold text-lg tracking-tight">PORTAL</span>
         </div>
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-4">
+          <button onClick={() => setIsSearchOpen(true)} className="text-white">
+            <Search size={24} />
+          </button>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu Overlay */}
@@ -1601,7 +1642,9 @@ export default function StudentDashboard() {
             <input 
               type="text" 
               placeholder="Search courses, people, or resources..." 
-              className="w-full pl-10 pr-4 py-2 bg-slate-100 border-transparent rounded-full text-sm focus:bg-white focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 transition-all outline-none"
+              onClick={() => setIsSearchOpen(true)}
+              readOnly
+              className="w-full pl-10 pr-4 py-2 bg-slate-100 border-transparent rounded-full text-sm focus:bg-white focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 transition-all outline-none cursor-pointer"
             />
           </div>
           <div className="flex items-center gap-6">
@@ -1690,6 +1733,9 @@ export default function StudentDashboard() {
 
         </div>
       </main>
+      
+      {/* Search Overlay */}
+      <StudentSearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} onSelectTab={setActiveTab} />
     </div>
   );
 }
