@@ -878,8 +878,20 @@ function CareerContent() {
   );
 }
 
-function SettingsContent() {
+function SettingsContent({ userProfile, setUserProfile, appSettings, setAppSettings }: any) {
   const [activeSettingsTab, setActiveSettingsTab] = useState('profile');
+  
+  // Local state for form inputs
+  const [localProfile, setLocalProfile] = useState(userProfile);
+  const [localSettings, setLocalSettings] = useState(appSettings);
+
+  const handleSaveProfile = () => {
+    setUserProfile(localProfile);
+  };
+
+  const handleSaveSettings = () => {
+    setAppSettings(localSettings);
+  };
 
   const settingsTabs = [
     { id: 'profile', label: 'Profile & Personal Info', icon: User },
@@ -937,15 +949,29 @@ function SettingsContent() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Preferred First Name</label>
-                    <input type="text" defaultValue="John" className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" />
+                    <input 
+                      type="text" 
+                      value={localProfile.firstName} 
+                      onChange={(e) => setLocalProfile({...localProfile, firstName: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Legal Last Name</label>
-                    <input type="text" defaultValue="Doe" disabled className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />
+                    <input 
+                      type="text" 
+                      value={localProfile.lastName} 
+                      onChange={(e) => setLocalProfile({...localProfile, lastName: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Pronouns</label>
-                    <select className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold">
+                    <select 
+                      value={localProfile.pronouns}
+                      onChange={(e) => setLocalProfile({...localProfile, pronouns: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold"
+                    >
                       <option>He/Him</option>
                       <option>She/Her</option>
                       <option>They/Them</option>
@@ -955,7 +981,7 @@ function SettingsContent() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Student ID</label>
-                    <input type="text" defaultValue="10029384" disabled className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />
+                    <input type="text" value={localProfile.studentId} disabled className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />
                   </div>
                 </div>
               </div>
@@ -965,21 +991,34 @@ function SettingsContent() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">University Email</label>
-                    <input type="email" defaultValue="j.doe@university.edu" disabled className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />
+                    <input type="email" value={localProfile.email} disabled className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Personal Email</label>
-                    <input type="email" defaultValue="john.doe@gmail.com" className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" />
+                    <input 
+                      type="email" 
+                      value={localProfile.personalEmail} 
+                      onChange={(e) => setLocalProfile({...localProfile, personalEmail: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">Mobile Phone</label>
-                    <input type="tel" defaultValue="+1 (555) 123-4567" className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" />
+                    <input 
+                      type="tel" 
+                      value={localProfile.phone} 
+                      onChange={(e) => setLocalProfile({...localProfile, phone: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-royal-gold focus:ring-1 focus:ring-royal-gold" 
+                    />
                   </div>
                 </div>
               </div>
               
               <div className="pt-6 flex justify-end">
-                <button className="px-6 py-2 bg-royal-navy text-white font-bold rounded-lg shadow-md hover:bg-royal-navy/90 transition-colors">
+                <button 
+                  onClick={handleSaveProfile}
+                  className="px-6 py-2 bg-royal-navy text-white font-bold rounded-lg shadow-md hover:bg-royal-navy/90 transition-colors"
+                >
                   Save Changes
                 </button>
               </div>
@@ -1116,7 +1155,10 @@ function SettingsContent() {
               <div>
                 <h2 className="text-xl font-bold text-royal-navy mb-4">Theme & Display</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <button className="flex flex-col items-center gap-3 p-4 border-2 border-royal-navy rounded-xl bg-slate-50">
+                  <button 
+                    onClick={() => setLocalSettings({...localSettings, theme: 'light'})}
+                    className={`flex flex-col items-center gap-3 p-4 border-2 rounded-xl bg-slate-50 transition-colors ${localSettings.theme === 'light' ? 'border-royal-navy' : 'border-transparent hover:border-slate-300'}`}
+                  >
                     <div className="w-full h-24 bg-white rounded border border-slate-200 shadow-sm flex flex-col overflow-hidden">
                       <div className="h-4 bg-royal-navy w-full"></div>
                       <div className="flex-1 p-2 flex gap-2">
@@ -1129,7 +1171,10 @@ function SettingsContent() {
                     </div>
                     <span className="font-bold text-royal-navy text-sm">Light Mode</span>
                   </button>
-                  <button className="flex flex-col items-center gap-3 p-4 border-2 border-transparent hover:border-slate-300 rounded-xl bg-slate-50 opacity-60 cursor-not-allowed">
+                  <button 
+                    onClick={() => setLocalSettings({...localSettings, theme: 'dark'})}
+                    className={`flex flex-col items-center gap-3 p-4 border-2 rounded-xl bg-slate-50 transition-colors ${localSettings.theme === 'dark' ? 'border-royal-navy' : 'border-transparent hover:border-slate-300'}`}
+                  >
                     <div className="w-full h-24 bg-slate-900 rounded border border-slate-700 shadow-sm flex flex-col overflow-hidden">
                       <div className="h-4 bg-slate-800 w-full"></div>
                       <div className="flex-1 p-2 flex gap-2">
@@ -1140,9 +1185,12 @@ function SettingsContent() {
                         </div>
                       </div>
                     </div>
-                    <span className="font-medium text-slate-600 text-sm">Dark Mode (Coming Soon)</span>
+                    <span className="font-medium text-slate-600 text-sm">Dark Mode</span>
                   </button>
-                  <button className="flex flex-col items-center gap-3 p-4 border-2 border-transparent hover:border-slate-300 rounded-xl bg-slate-50 opacity-60 cursor-not-allowed">
+                  <button 
+                    onClick={() => setLocalSettings({...localSettings, theme: 'system'})}
+                    className={`flex flex-col items-center gap-3 p-4 border-2 rounded-xl bg-slate-50 transition-colors ${localSettings.theme === 'system' ? 'border-royal-navy' : 'border-transparent hover:border-slate-300'}`}
+                  >
                     <div className="w-full h-24 bg-slate-100 rounded border border-slate-300 shadow-sm flex flex-col overflow-hidden">
                       <div className="h-4 bg-slate-300 w-full"></div>
                       <div className="flex-1 p-2 flex gap-2">
@@ -1163,7 +1211,12 @@ function SettingsContent() {
                 <div className="space-y-4">
                   <label className="flex items-start gap-3 cursor-pointer">
                     <div className="relative flex items-center mt-1">
-                      <input type="checkbox" className="sr-only peer" />
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={localSettings.highContrast}
+                        onChange={(e) => setLocalSettings({...localSettings, highContrast: e.target.checked})}
+                      />
                       <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-royal-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </div>
                     <div>
@@ -1173,7 +1226,12 @@ function SettingsContent() {
                   </label>
                   <label className="flex items-start gap-3 cursor-pointer">
                     <div className="relative flex items-center mt-1">
-                      <input type="checkbox" className="sr-only peer" />
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={localSettings.reduceMotion}
+                        onChange={(e) => setLocalSettings({...localSettings, reduceMotion: e.target.checked})}
+                      />
                       <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-royal-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
                     </div>
                     <div>
@@ -1182,6 +1240,15 @@ function SettingsContent() {
                     </div>
                   </label>
                 </div>
+              </div>
+              
+              <div className="pt-6 flex justify-end">
+                <button 
+                  onClick={handleSaveSettings}
+                  className="px-6 py-2 bg-royal-navy text-white font-bold rounded-lg shadow-md hover:bg-royal-navy/90 transition-colors"
+                >
+                  Save Preferences
+                </button>
               </div>
             </div>
           )}
@@ -1469,6 +1536,22 @@ export default function StudentDashboard() {
     { id: 3, text: 'Library book due tomorrow.', time: '1 day ago', unread: false },
   ]);
 
+  const [userProfile, setUserProfile] = useState({
+    firstName: 'Alexander',
+    lastName: 'Wright',
+    studentId: 'RI-2024-8921',
+    email: 'alexander.w@students.ric.edu',
+    personalEmail: 'alexander.wright@gmail.com',
+    phone: '+1 (555) 123-4567',
+    pronouns: 'He/Him',
+  });
+
+  const [appSettings, setAppSettings] = useState({
+    theme: 'light',
+    highContrast: false,
+    reduceMotion: false,
+  });
+
   const unreadCount = notifications.filter(n => n.unread).length;
 
   const markAllRead = () => {
@@ -1489,7 +1572,7 @@ export default function StudentDashboard() {
       case 'library': return <LibraryContent setActiveTab={setActiveTab} />;
       case 'career': return <CareerContent />;
       case 'certificates': return <CertificatesContent />;
-      case 'settings': return <SettingsContent />;
+      case 'settings': return <SettingsContent userProfile={userProfile} setUserProfile={setUserProfile} appSettings={appSettings} setAppSettings={setAppSettings} />;
       case 'library-db': return <LibraryDBContent />;
       case 'advising': return <AdvisingContent />;
       case 'campus-map': return <CampusMapContent />;
@@ -1499,7 +1582,34 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div 
+      className={`min-h-screen flex transition-colors duration-300 ${appSettings.theme === 'dark' ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'} ${appSettings.highContrast ? 'contrast-125' : ''}`}
+      style={appSettings.reduceMotion ? { '--tw-transition-duration': '0ms' } as React.CSSProperties : {}}
+    >
+      {/* Apply dark mode filter if needed (simple implementation) */}
+      {appSettings.theme === 'dark' && (
+        <style>{`
+          .bg-white { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
+          .bg-slate-50 { background-color: #0f172a !important; border-color: #1e293b !important; color: #f1f5f9 !important; }
+          .bg-slate-100 { background-color: #1e293b !important; border-color: #334155 !important; color: #e2e8f0 !important; }
+          .text-royal-navy { color: #f8fafc !important; }
+          .text-slate-700 { color: #cbd5e1 !important; }
+          .text-slate-600 { color: #94a3b8 !important; }
+          .text-slate-500 { color: #64748b !important; }
+          .border-slate-200 { border-color: #334155 !important; }
+          .border-slate-100 { border-color: #1e293b !important; }
+        `}</style>
+      )}
+      {appSettings.reduceMotion && (
+        <style>{`
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        `}</style>
+      )}
       {/* Sidebar (Desktop) */}
       <aside className="hidden lg:flex flex-col w-72 bg-royal-navy text-white fixed h-full z-20">
         <div className="p-6 flex items-center gap-3 border-b border-white/10">
@@ -1520,8 +1630,8 @@ export default function StudentDashboard() {
             referrerPolicy="no-referrer"
           />
           <div>
-            <h3 className="font-bold text-sm">Alexander Wright</h3>
-            <p className="text-xs text-white/60">ID: RI-2024-8921</p>
+            <h3 className="font-bold text-sm">{userProfile.firstName} {userProfile.lastName}</h3>
+            <p className="text-xs text-white/60">ID: {userProfile.studentId}</p>
             <span className="inline-block mt-1 px-2 py-0.5 bg-royal-gold/20 text-royal-gold text-[10px] rounded-full font-medium border border-royal-gold/30">
               Senior • Computer Science
             </span>
@@ -1706,7 +1816,7 @@ export default function StudentDashboard() {
             <div className="h-8 w-px bg-slate-200"></div>
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className="text-right">
-                <p className="text-sm font-bold text-royal-navy group-hover:text-royal-gold transition-colors">Alexander W.</p>
+                <p className="text-sm font-bold text-royal-navy group-hover:text-royal-gold transition-colors">{userProfile.firstName} {userProfile.lastName.charAt(0)}.</p>
                 <p className="text-xs text-slate-500">Student</p>
               </div>
               <img 

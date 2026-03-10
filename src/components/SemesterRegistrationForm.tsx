@@ -7,6 +7,12 @@ export default function SemesterRegistrationForm() {
   const [formData, setFormData] = useState({
     semester: 'Fall 2026',
     program: 'B.Tech Computer Science',
+    studentName: 'Alexander Wright',
+    studentId: 'RI-2024-8921',
+    email: 'alexander.w@students.ric.edu',
+    phone: '+1 (555) 123-4567',
+    dob: '2002-05-14',
+    address: '123 University Ave, Apt 4B, College Town, ST 12345',
     courses: [] as string[],
     paymentMethod: 'credit_card',
     cardNumber: '',
@@ -78,8 +84,62 @@ export default function SemesterRegistrationForm() {
         {/* Step 1: Details */}
         {step === 1 && (
           <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-            <h3 className="font-bold text-lg text-royal-navy border-b border-slate-100 pb-2">1. Academic Details</h3>
+            <h3 className="font-bold text-lg text-royal-navy border-b border-slate-100 pb-2">1. Academic & Personal Details</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Student Name</label>
+                <input 
+                  type="text" 
+                  value={formData.studentName}
+                  onChange={(e) => setFormData({...formData, studentName: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-royal-gold/20 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Student ID</label>
+                <input 
+                  type="text" 
+                  value={formData.studentId}
+                  disabled
+                  className="w-full p-3 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-royal-gold/20 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+                <input 
+                  type="tel" 
+                  value={formData.phone}
+                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-royal-gold/20 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
+                <input 
+                  type="date" 
+                  value={formData.dob}
+                  onChange={(e) => setFormData({...formData, dob: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-royal-gold/20 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
+                <input 
+                  type="text" 
+                  value={formData.address}
+                  onChange={(e) => setFormData({...formData, address: e.target.value})}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-royal-gold/20 outline-none"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Semester</label>
                 <select 
